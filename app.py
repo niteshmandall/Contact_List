@@ -5,12 +5,15 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from flask_login import UserMixin
 import jwt 
 from functools import wraps
+from flask_redis import FlaskRedis
 
 secret_key = 'niteshnk123'
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:NKMnk360@localhost/auth'
+app.config['REDIS_URL'] = "redis://localhost:6379/0"
 app.config['SECRET_KEY'] = '12345678'
+redis_client = FlaskRedis(app)
 db = SQLAlchemy(app)
 
 
@@ -253,6 +256,12 @@ def contact():
 
 
 
+@app.route('/redis_test', methods=['GET'])
+def test():
+    redis_client.set('nitesh', '1001')
+    data = redis_client.get('nitesh')
+    data_str = data.decode('utf-8')
+    return jsonify({ 'data': data_str})
 
 
 
